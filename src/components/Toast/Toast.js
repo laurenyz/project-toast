@@ -6,9 +6,8 @@ import {
   Info,
   X,
 } from 'react-feather';
-
+import { ToastContext } from '../ToastProvider';
 import VisuallyHidden from '../VisuallyHidden';
-
 import styles from './Toast.module.css';
 
 const ICONS_BY_VARIANT = {
@@ -18,18 +17,20 @@ const ICONS_BY_VARIANT = {
   error: AlertOctagon,
 };
 
-function Toast() {
+function Toast({id, message, variant}) {
+  const {setToasts} = React.useContext(ToastContext)
+  const Icon = ICONS_BY_VARIANT[variant]
   return (
-    <div className={`${styles.toast} ${styles.notice}`}>
+    <div className={`${styles.toast} ${styles[variant]}`}>
       <div className={styles.iconContainer}>
-        <Info size={24} />
+        <Icon size={24} />
       </div>
       <p className={styles.content}>
-        16 photos have been uploaded
+        <VisuallyHidden>{variant} -</VisuallyHidden>
+        {message}
       </p>
-      <button className={styles.closeButton}>
+      <button aria-label="Dismiss message" aria-live="off" className={styles.closeButton} onClick={()=>setToasts((prevState)=> prevState.filter(toast => toast.id !== id))}>
         <X size={24} />
-        <VisuallyHidden>Dismiss message</VisuallyHidden>
       </button>
     </div>
   );
